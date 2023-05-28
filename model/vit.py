@@ -82,7 +82,9 @@ class VisionTransformerEncoder(VisionTransformer):
             norm_layer=norm_layer,
         )
         self.encoder = Encoder(**encoder_kwargs)
-
+        self._depth = num_layers
+        self._image_size = image_size
+        self._patch_size = patch_size
         del self.heads
 
     def forward(self, x: Tensor):
@@ -132,6 +134,18 @@ class VisionTransformerEncoder(VisionTransformer):
             new_state_dict[k] = state_dict[k]
 
         return new_state_dict
+    
+    @property
+    def out_depth(self):
+        return self._depth
+    
+    @property
+    def out_img_size(self):
+        return self._image_size
+
+    @property
+    def out_patch_size(self):
+        return self._patch_size
 
 
 def _build_vit(
@@ -293,3 +307,4 @@ if __name__ == "__main__":
     inputs = torch.rand(size=(2, 3, 224, 224), dtype=torch.float32)
     outputs = model(inputs)
     print([out.shape for out in outputs])
+    print(model.out_depth)
