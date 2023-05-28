@@ -1,7 +1,6 @@
 import sys
-from typing import List, Any
+from typing import Any
 
-from model.encoder.getencoder import get_encoder
 import torch
 from torch import nn, Tensor
 from model.modules.layers import Conv2dBnReLU
@@ -31,21 +30,3 @@ class DeepSupervisionHead(nn.Module):
             x = self.blocks[index](feature)
             outs.append(x)
         return outs
-
-
-if __name__ == '__main__':
-    # dict = {"out1": [1, 2, 3],
-    #         "out2": [4, 5, 6],
-    #         "out3": [7, 8, 9],
-    #         }
-    # print(**dict)
-    # from encoder.resnet import resnet_extract
-    backbone = get_encoder("resnet50", predicted=False)
-    head = DeepSupervisionHead(backbone.out_channels[:-1], 'cbam', 1)
-    x = torch.randn(2, 3, 512, 512)
-    features = backbone(x)
-    outs = head(features[:-1])
-    # print(outs[1].shape)
-    print([out.shape for out in outs])
-    # outs_f = F.interpolate(out, size=x.shape[-2:], mode='bilinear', align_corners=False)
-    # print(out.shape for out in outs_f)
