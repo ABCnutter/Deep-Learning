@@ -11,6 +11,14 @@ from torchvision.models.vision_transformer import (
     model_urls,
 )
 
+__all__ = [
+    "vit_b_16",
+    "vit_b_32",
+    "vit_l_16",
+    "vit_l_32",
+    "vit_h_14",
+]
+
 
 model_urls["vit_h_14"] = ViT_H_14_Weights.IMAGENET1K_SWAG_LINEAR_V1.url
 
@@ -134,11 +142,11 @@ class VisionTransformerEncoder(VisionTransformer):
             new_state_dict[k] = state_dict[k]
 
         return new_state_dict
-    
+
     @property
     def out_depth(self):
         return self._depth
-    
+
     @property
     def out_img_size(self):
         return self._image_size
