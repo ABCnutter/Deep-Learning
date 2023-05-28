@@ -29,7 +29,7 @@
 -   ECANet
 -   CBAM
 
-2. #### 发布通用conv2dBNRelu集成Block, 支持轻量化卷积
+2. #### 发布通用Conv2dBNRelu集成Block, 支持轻量化卷积
 
 类似于torch的**Conv2dNormActivation**模块，属于其子集，不过本次发布**支持将普通2d卷积替换为深度可分离2d卷积**（**depth_wise_separable_conv**，引用自轻量型网络mobilenet，主要分为两个过程，分别为逐通道卷积（Depthwise Convolution）和逐点卷积（Pointwise Convolution））
 
