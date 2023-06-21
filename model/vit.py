@@ -26,12 +26,9 @@ model_urls["vit_h_14"] = ViT_H_14_Weights.IMAGENET1K_SWAG_LINEAR_V1.url
 class Encoder(Encoder):
     def __init__(
         self,
-        feature_only: bool = True,
         **kwargs,
     ):
         super().__init__(**kwargs)
-        self.feature_only = feature_only
-        # del self.ln
 
     def forward(self, x: Tensor):
         print(x.shape)
@@ -41,19 +38,15 @@ class Encoder(Encoder):
         n, l, _ = x.shape
         features = []
         x = x + self.pos_embedding
-
+        x = self.dropout(x)
         for i in range(len(self.layers)):
             x = self.layers[i](x)
-            y = self.ln(x)
-            y = y[:, 1:, :]
+            # y = self.ln(x)
+            y = x[:, 1:, :]
             y = y.permute(0, 1, 2)
             y = y.reshape(n, -1, int(sqrt(l)), int(sqrt(l)))
             features.append(y)
-
-        if self.feature_only:
-            return features
-        
-        return features[-1]
+        return features
 
 
 class VisionTransformerEncoder(VisionTransformer):
@@ -65,7 +58,6 @@ class VisionTransformerEncoder(VisionTransformer):
         num_heads: int,
         hidden_dim: int,
         mlp_dim: int,
-        feature_only: bool = True,
         dropout: float = 0.0,
         attention_dropout: float = 0.0,
         norm_layer: Callable[..., torch.nn.Module] = partial(nn.LayerNorm, eps=1e-6),
@@ -95,7 +87,7 @@ class VisionTransformerEncoder(VisionTransformer):
             attention_dropout=attention_dropout,
             norm_layer=norm_layer,
         )
-        self.encoder = Encoder(feature_only, **encoder_kwargs)
+        self.encoder = Encoder(**encoder_kwargs)
         self._depth = num_layers
         self._image_size = image_size
         self._patch_size = patch_size
@@ -171,7 +163,6 @@ def _build_vit(
     mlp_dim: int = 3072,
     weights_name: str = None,
     progress: bool = True,
-    feature_only: bool = True,
     **kwargs,
 ):
     model = VisionTransformerEncoder(
@@ -181,7 +172,6 @@ def _build_vit(
         num_heads=num_heads,
         hidden_dim=hidden_dim,
         mlp_dim=mlp_dim,
-        feature_only=feature_only,
         **kwargs,
     )
 
@@ -198,7 +188,6 @@ def vit_b_16(
     num_heads=12,
     weights_name: str = "vit_b_16",
     progress: bool = True,
-    feature_only: bool = True,
     **kwargs,
 ):
     if weights_name is not None:
@@ -215,7 +204,6 @@ def vit_b_16(
         mlp_dim=3072,
         weights_name=weights_name,
         progress=progress,
-        feature_only=feature_only,
         **kwargs,
     )
 
@@ -225,7 +213,6 @@ def vit_b_32(
     num_heads=12,
     weights_name: str = "vit_b_32",
     progress: bool = True,
-    feature_only: bool = True,
     **kwargs,
 ):
     if weights_name is not None:
@@ -242,7 +229,6 @@ def vit_b_32(
         mlp_dim=3072,
         weights_name=weights_name,
         progress=progress,
-        feature_only=feature_only,
         **kwargs,
     )
 
@@ -252,7 +238,6 @@ def vit_l_16(
     num_heads=16,
     weights_name: str = "vit_l_16",
     progress: bool = True,
-    feature_only: bool = True,
     **kwargs,
 ):
     if weights_name is not None:
@@ -269,7 +254,6 @@ def vit_l_16(
         mlp_dim=4096,
         weights_name=weights_name,
         progress=progress,
-        feature_only=feature_only,
         **kwargs,
     )
 
@@ -279,7 +263,6 @@ def vit_l_32(
     num_heads=16,
     weights_name: str = "vit_l_32",
     progress: bool = True,
-    feature_only: bool = True,
     **kwargs,
 ):
     if weights_name is not None:
@@ -296,7 +279,6 @@ def vit_l_32(
         mlp_dim=4096,
         weights_name=weights_name,
         progress=progress,
-        feature_only=feature_only,
         **kwargs,
     )
 
@@ -306,7 +288,6 @@ def vit_h_14(
     num_heads=16,
     weights_name: str = "vit_h_14",
     progress: bool = True,
-    feature_only: bool = True,
     **kwargs,
 ):
     if weights_name is not None:
@@ -323,13 +304,12 @@ def vit_h_14(
         mlp_dim=5120,
         weights_name=weights_name,
         progress=progress,
-        feature_only=feature_only,
         **kwargs,
     )
 
 
 if __name__ == "__main__":
-    model = vit_b_16(num_layers=4, num_heads=4, weights_name="vit_b_16", progress=True, feature_only=False)
+    model = vit_b_16(num_layers=4, num_heads=4, weights_name="vit_b_16", progress=True)
     inputs = torch.rand(size=(2, 3, 224, 224), dtype=torch.float32)
     outputs = model(inputs)
     print([out.shape for out in outputs])
