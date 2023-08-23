@@ -26,7 +26,7 @@ class SENet(nn.Module):
         self.fgp = nn.AdaptiveAvgPool2d((1, 1))
         self.fc1 = nn.Linear(self.in_channels, int(self.in_channels / ratio), bias=False)
         self.act1 = nn.ReLU()
-        self.fc2 = nn.Linear(int(self.in_channels / 4), self.in_channels, bias=False)
+        self.fc2 = nn.Linear(int(self.in_channels / ratio), self.in_channels, bias=False)
         self.act2 = nn.Sigmoid()
 
     def forward(self, x):
