@@ -1,0 +1,25 @@
+{
+  "EO":{
+	"pitch":-16.72,
+	"compass":244.34,
+	"heading":36.43,
+	"aov":0.8,
+	"type":13
+  },
+  "target":{
+	"valid":true,
+	"height":0,
+	"lat":29.9491066,
+	"lon":105.3557216,
+	"distance":22846
+  },
+  "plane":{
+	"pitch":2.82,
+	"groundspeed":226.33,
+	"height":5500.4,
+	"roll":-0.17,
+	"lat":29.9455514,
+	"lon":105.3939396,
+	"heading":79.23
+  }
+}
